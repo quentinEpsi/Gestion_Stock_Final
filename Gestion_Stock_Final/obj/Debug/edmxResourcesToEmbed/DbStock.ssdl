@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Gestion_De_StockModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Categorie">
+    <Key>
+      <PropertyRef Name="ID_Categorie" />
+    </Key>
+    <Property Name="ID_Categorie" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nom_Categorie" Type="nvarchar" MaxLength="250" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Client">
+    <Key>
+      <PropertyRef Name="ID_Client" />
+    </Key>
+    <Property Name="ID_Client" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nom_Client" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Prenom_Client" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Adresse_Client" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Telephone_Client" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Pays_Client" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Ville_Client" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Email_Client" Type="nvarchar" MaxLength="250" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Commande">
+    <Key>
+      <PropertyRef Name="ID_Commande" />
+    </Key>
+    <Property Name="ID_Commande" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Date_Commande" Type="datetime" Nullable="false" />
+    <Property Name="ID_Client" Type="int" Nullable="false" />
+    <Property Name="Total_HT" Type="nvarchar" MaxLength="250" />
+    <Property Name="TVA" Type="nvarchar" MaxLength="20" />
+    <Property Name="Total_TTC" Type="nvarchar" MaxLength="250" />
+  </EntityType>
+  <!--Erreurs détectées durant la génération :
+avertissement 6002: La table/vue 'Gestion_De_Stock.dbo.Details_Commande' n'a pas de clé primaire définie. La clé a été déduite et la définition a été créée en tant que table/vue en lecture seule.-->
+  <EntityType Name="Details_Commande">
+    <Key>
+      <PropertyRef Name="ID_Commande" />
+      <PropertyRef Name="ID_Produit" />
+      <PropertyRef Name="Quantité" />
+      <PropertyRef Name="Prix" />
+      <PropertyRef Name="Remise" />
+      <PropertyRef Name="Total" />
+    </Key>
+    <Property Name="ID_Commande" Type="int" Nullable="false" />
+    <Property Name="ID_Produit" Type="int" Nullable="false" />
+    <Property Name="Quantité" Type="int" Nullable="false" />
+    <Property Name="Prix" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Remise" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Total" Type="nvarchar" MaxLength="250" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Produit">
+    <Key>
+      <PropertyRef Name="ID_Produit" />
+    </Key>
+    <Property Name="ID_Produit" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nom_Produit" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Quantite_Produit" Type="int" Nullable="false" />
+    <Property Name="Prix_Produit" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Image_Produit" Type="image" Nullable="false" />
+    <Property Name="ID_Categorie" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Utilisateur">
+    <Key>
+      <PropertyRef Name="Nom_Utilisateur" />
+    </Key>
+    <Property Name="Nom_Utilisateur" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Mot_De_Passe" Type="nvarchar" MaxLength="250" Nullable="false" />
+  </EntityType>
+  <Association Name="FK_Commande_Client">
+    <End Role="Client" Type="Self.Client" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Commande" Type="Self.Commande" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Client">
+        <PropertyRef Name="ID_Client" />
+      </Principal>
+      <Dependent Role="Commande">
+        <PropertyRef Name="ID_Client" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Details_Commande_Commande">
+    <End Role="Commande" Type="Self.Commande" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Details_Commande" Type="Self.Details_Commande" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Commande">
+        <PropertyRef Name="ID_Commande" />
+      </Principal>
+      <Dependent Role="Details_Commande">
+        <PropertyRef Name="ID_Commande" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Details_Commande_Produit">
+    <End Role="Produit" Type="Self.Produit" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Details_Commande" Type="Self.Details_Commande" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Produit">
+        <PropertyRef Name="ID_Produit" />
+      </Principal>
+      <Dependent Role="Details_Commande">
+        <PropertyRef Name="ID_Produit" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Produit_Categorie">
+    <End Role="Categorie" Type="Self.Categorie" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Produit" Type="Self.Produit" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Categorie">
+        <PropertyRef Name="ID_Categorie" />
+      </Principal>
+      <Dependent Role="Produit">
+        <PropertyRef Name="ID_Categorie" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Gestion_De_StockModelStoreContainer">
+    <EntitySet Name="Categorie" EntityType="Self.Categorie" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Client" EntityType="Self.Client" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Commande" EntityType="Self.Commande" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Produit" EntityType="Self.Produit" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Utilisateur" EntityType="Self.Utilisateur" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Details_Commande" EntityType="Self.Details_Commande" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [Details_Commande].[ID_Commande] AS [ID_Commande], 
+    [Details_Commande].[ID_Produit] AS [ID_Produit], 
+    [Details_Commande].[Quantité] AS [Quantité], 
+    [Details_Commande].[Prix] AS [Prix], 
+    [Details_Commande].[Remise] AS [Remise], 
+    [Details_Commande].[Total] AS [Total]
+    FROM [dbo].[Details_Commande] AS [Details_Commande]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK_Commande_Client" Association="Self.FK_Commande_Client">
+      <End Role="Client" EntitySet="Client" />
+      <End Role="Commande" EntitySet="Commande" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Details_Commande_Commande" Association="Self.FK_Details_Commande_Commande">
+      <End Role="Commande" EntitySet="Commande" />
+      <End Role="Details_Commande" EntitySet="Details_Commande" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Details_Commande_Produit" Association="Self.FK_Details_Commande_Produit">
+      <End Role="Produit" EntitySet="Produit" />
+      <End Role="Details_Commande" EntitySet="Details_Commande" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Produit_Categorie" Association="Self.FK_Produit_Categorie">
+      <End Role="Categorie" EntitySet="Categorie" />
+      <End Role="Produit" EntitySet="Produit" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
